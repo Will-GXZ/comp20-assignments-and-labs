@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Fail</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+<h1 id="title">Fail</h1>
+
+<video src="https://www.cs.tufts.edu/comp/20/fail.mp4" id="failvideo" controls></video>
+<div id="lyrics"></div>
+
+<script>
+    // Complete this section and create a CSS file named style.css
+    var video = document.getElementById('failvideo');
+    var lyrics = document.getElementById('lyrics');
+    video.addEventListener('timeupdate', function() {
+        if (video.currentTime > 9 && video.currentTime < 13) {
+            lyrics.innerHTML = "You've got me feelin' emotions";
+        }
+        else if (video.currentTime >13 && video.currentTime <18) {
+            lyrics.innerHTML = "Deeper than I've ever dreamed of";
+        }
+        else if (video.currentTime > 18 && video.currentTime < 21) {
+            lyrics.innerHTML = "You've got me feelin' emotions";
+        }
+        else if (video.currentTime > 21 && video.currentTime < 29) {
+            lyrics.innerHTML = "Higher than the heavens above";
+        }
+        else if (video.currentTime > 44 && video.currentTime < 47) {
+            lyrics.innerHTML = "Feels like a dream";
+        }
+        else if (video.currentTime > 60 && video.currentTime < 63) {
+            lyrics.innerHTML = "You've got me feelin' emotions";
+        }
+        else if (video.currentTime >63 && video.currentTime <66) {
+            lyrics.innerHTML = "Deeper than I've ever dreamed of";
+        }
+        else if (video.currentTime > 66 && video.currentTime < 71) {
+            lyrics.innerHTML = "You've got me feelin' emotions";
+        }
+        else {
+            lyrics.innerHTML = '';
+        }
+    });
+</script>
+</body>
+</html> 
