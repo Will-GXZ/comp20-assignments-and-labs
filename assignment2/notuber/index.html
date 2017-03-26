@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Comp20, HW2, NotUber page</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <script src="https://maps.google.com/maps/api/js?libraries=geometry" ></script>
+    <link rel="stylesheet" href="./main.css" />
+    <script>
+        var my_lat = 0;
+        var my_lng = 0;
+        var users = null;
+        var markerType = '';
+        var markerArray = new Array();
+        var me = new google.maps.LatLng(my_lat, my_lng);
+        var map;
+        var my_icon = './image/my_icon.gif';
+        var vehicle_icon = './image/black_car.png';
+        var passenger_icon = './image/passenger_icon.png';
+        var infoWindow = new google.maps.InfoWindow();
+
+        myOptions = {   zoom: 14, 
+                        center: me,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP    };
+        function getMyLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    my_lat = position.coords.latitude;
+                    my_lng = position.coords.longitude;
+                    me = new google.maps.LatLng(my_lat, my_lng);
+                    map.panTo(me);
+                    var my_marker = new google.maps.Marker({
+                        position: me,
+                        map: map,
+                        title: "JANET",
+                        icon: my_icon
+                    });
+                    my_marker.addListener('click', function() {
+                        infoWindow.setContent(my_marker.title);
+                        infoWindow.open(map, my_marker);
+                    });
+                    getData();
+                });
+            } else {
+                alert("Yore browser does not support geolocation, sorry.");
+            }
+        }
+
+        function init() {
+            map = new google.maps.Map(document.getElementById("map"), myOptions);
+            getMyLocation();
+        }
+        function getData() {
+            var userJason;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    userJason = this.responseText;
+                    users = JSON.parse(userJason);
+                    setMarkers();
+                }
+            };
+            xhr.open("POST", "https://defense-in-derpth.herokuapp.com/submit", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("username=JANET&lat=" + my_lat + "&lng=" + my_lng);
+        }
+        function setMarkers() {
+            var userIcon = '';
+            if (users.hasOwnProperty('passengers')) {
+                markerType = 'passengers';
+                userArray = users.passengers;
+                userIcon = passenger_icon;
+            } else if (users.hasOwnProperty('vehicles')) {
+                markerType = 'vehicles';
+                userArray = users.vehicles;
+                userIcon =  vehicle_icon;
+            } else {
+                alert('POST message might be wrong, please contact the developer.');
+            }
+            for (var i = 0; i < userArray.length; ++i) {
+                var user = userArray[i];
+                var lat = user.lat;
+                var lng = user.lng;
+                var pos = new google.maps.LatLng(lat, lng);
+                var distance = (0.000621371 * google.maps.geometry.spherical.computeDistanceBetween(me, pos)).toFixed(3);
+                markerArray[i] = new google.maps.Marker({
+                    position: pos,
+                    title: user.username,
+                    icon: userIcon,
+                    map: map
+                });
+                markerArray[i].distance = distance;
+                google.maps.event.addListener(markerArray[i], 'click', function() {
+                    infoWindow.setContent("<h2>" + this.title + '</h2><p>...is ' + this.distance + ' miles away from me</p>');
+                    infoWindow.open(map, this);
+                });
+            }
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <div id="map"></div>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
